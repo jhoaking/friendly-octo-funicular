@@ -1,19 +1,35 @@
-import { Type } from 'mysql2/typings/mysql/lib/parsers/typeCast';
+
 import {pool} from '../db'
 import { NuevaTask, TasksData } from '../types/data';
-import { ResultSetHeader } from 'mysql2';
+import { ResultSetHeader,RowDataPacket } from 'mysql2';
 
 export class taskModel{
 
-    static obtenerTarea = async () : Promise<NuevaTask[]> =>{
+    static obtenerTarea = async () : Promise<TasksData[]> =>{
         try {
             const query = 'SELECT * FROM tasks';
             const [rows] = await pool.query(query);
-            return rows as NuevaTask[] ;
+            return rows as TasksData[] ;
         } catch (error) {
             console.error(error);
-            throw new Error("error al obtener en la db");
-        } 
+            throw new Error("error al obtener la tarea en la db");
+        }  
+    }
+
+    static obtenerTareaPorId = async (id: number): Promise<TasksData| undefined> =>{
+        try {
+            const query = 'SELECT * FROM tasks WHERE task_id = ?';
+            const [rows] = await pool.query<TasksData[] & RowDataPacket[]>(query, [id]);
+
+        if (rows .length > 0) {
+        return rows[0] as TasksData;
+        }
+            return undefined;
+           
+        } catch (error) {
+            console.error(error);
+            throw new Error("error al obtener a tarea pr id  en la db");
+        }
     }
 
     static crearTarea = async (data :NuevaTask) : Promise<TasksData> =>{
@@ -25,7 +41,7 @@ export class taskModel{
             return {task_id : rows.insertId , ...data};
         } catch (error) {
             console.error(error);
-            throw new Error("error al crear  en la db");
+            throw new Error("error al crear la tarea  en la db");
         }
     }
 
@@ -37,7 +53,7 @@ export class taskModel{
             return rows.affectedRows === 1 ;
         } catch (error) {
             console.error(error);
-            throw new Error("error al eliminar  en la db");
+            throw new Error("error al eliminar la tarea  en la db");
         }
     }
 
@@ -49,7 +65,7 @@ export class taskModel{
             return rows.affectedRows === 1 ;
         } catch (error) {
             console.error(error);
-            throw new Error("error al actualizar  en la db");
+            throw new Error("error al actualizar la tarea  en la db");
         }
     }
 }
