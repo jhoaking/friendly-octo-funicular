@@ -54,10 +54,10 @@ export class  taskController{
             if(!vali.valid){
                 res.status(400).json({ errors: vali.errors });
                 return;
-            }
+            } 
 
             const tarea = await updateTask(+req.params.id, vali.data as NuevaTask);
-            res.status(200).json(tarea);
+            res.status(200).json({message : ' se actualizo con exito' , tarea});
         } catch (error) {
             res.status(500).json({message : 'error al actualizar en el controller'});
         }

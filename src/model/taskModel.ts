@@ -48,7 +48,7 @@ export class taskModel{
     static eliminarTarea = async(id: number ) : Promise<boolean> =>{
         try {
             const query = 'DELETE FROM tasks WHERE task_id = ?';
-            const [rows] = await pool.query<ResultSetHeader>(query[id]);
+            const [rows] = await pool.query<ResultSetHeader>(query,[id]);
 
             return rows.affectedRows === 1 ;
         } catch (error) {
