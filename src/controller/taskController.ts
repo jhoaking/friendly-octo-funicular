@@ -2,6 +2,7 @@ import { getTask,getTaskById,createTask,deleteTask,updateTask } from "../service
 import { validarTask } from "../schema/tasSchema";
 import { Request, Response } from 'express';
 import { NuevaTask } from "../types/data";
+import { NotFound ,BadRequest} from "../util/Error";
 
 
 
@@ -20,7 +21,11 @@ export class  taskController{
             const result = await getTaskById(+req.params.id);
             res.status(200).json(result);
         } catch (error) {
-            res.status(500).json({message : 'error al obtener el id  en el controller'});
+            if (error instanceof NotFound) {
+                res.status(404).json({ message: error.message });
+              } else {
+                res.status(500).json({ message: "Error interno al obtener la tarea" });
+              }
         }
     }
 
@@ -34,7 +39,11 @@ export class  taskController{
             const tarea = await createTask(vali.data as NuevaTask);
             res.status(201).json(tarea);
         } catch (error) {
-            res.status(500).json({message : 'error al crear en el controller'});
+            if (error instanceof BadRequest) {
+                res.status(400).json({ message: error.message });
+              } else {
+                res.status(500).json({ message: "Error interno al obtener la tarea" });
+              }
         }
     }
 
@@ -43,7 +52,11 @@ export class  taskController{
             const result = await deleteTask(+req.params.id);
             res.status(200).json({message : 'tarea eliminada con exito',result});
         } catch (error) {
-            res.status(500).json({message : 'error al eliminar en el controller'});
+            if (error instanceof NotFound) {
+                res.status(404).json({ message: error.message });
+              } else {
+                res.status(500).json({ message: "Error interno al obtener la tarea" });
+              }
         }
      }
     
@@ -59,7 +72,11 @@ export class  taskController{
             const tarea = await updateTask(+req.params.id, vali.data as NuevaTask);
             res.status(200).json({message : ' se actualizo con exito' , tarea});
         } catch (error) {
-            res.status(500).json({message : 'error al actualizar en el controller'});
+            if (error instanceof NotFound || error instanceof BadRequest) {
+                res.status(404).json({ message: error.message });
+              } else {
+                res.status(500).json({ message: "Error interno al obtener la tarea" });
+              }
         }
      }
 }

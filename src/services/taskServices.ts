@@ -1,55 +1,50 @@
 import { NuevaTask, TasksData } from "../types/data";
 import { taskModel } from "../model/taskModel";
+import {  BadRequest, NotFound } from "../util/Error";
 
 
 export const getTask = async ():Promise<TasksData[]> =>{
-    try {
         const result = await taskModel.obtenerTarea();
+        if(!result){
+            throw new NotFound("Tarea");
+        }
         return result as TasksData[];
-    } catch (error) {
-        console.error(error);
-        throw new Error("error al otener las tareas desde el service");
-    }
 }
 
 export const getTaskById = async (id : number) : Promise<TasksData | undefined> => {
-    try {
+    
         const result = await taskModel.obtenerTareaPorId(id);
+        if(!result){
+            throw new NotFound("Tarea");
+        }
         return result;
-    } catch (error) {
-        console.error(error);
-        throw new Error("error al otener las tareas por id desde el service");
-    }
 }
 
 export  const createTask = async (data: NuevaTask) : Promise<TasksData>=>{
-    try {
+   
         const result = await taskModel.crearTarea(data);
+        if(!result){
+            throw new BadRequest("datos invalidos");
+        }
         return result;
-    } catch (error) {
-        console.error(error);
-        throw new Error("error al crear las tareas desde el service");
-    }
+   
 }
 
 export const deleteTask = async (id: number) : Promise<boolean>=> {
-    try {
         const result = await taskModel.eliminarTarea(id);
+        if(!result){
+            throw new NotFound("tarea");
+        }
         return result;
-    } catch (error) {
-        console.error(error);
-        throw new Error("error al eliminar las tareas desde el service");
-    }
 }
 
 export const updateTask = async (id:number , data : NuevaTask) : Promise<boolean> =>{
-    try {
+   
         const result = await taskModel.actualizarTarea(id,data);
+        if(!result){
+            throw new NotFound("Tarea");
+        }
         return result;
-    } catch (error) {
-        console.error(error);
-        throw new Error("error al acualizar las tareas desde el service");
-    }
 }
 
 
